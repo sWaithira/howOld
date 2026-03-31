@@ -56,7 +56,7 @@ export default function HUDPanel({ children, accent = 'var(--toxic)', label, emo
         </div>
       )}
 
-      {/* scanner line — shows on hover */}
+      {/* scanner line */}
       <div style={{
         position: 'absolute',
         left: 0, right: 0,
