@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Zone01Identify({ onDateSet }) {
+export default function Zone01Identify({ onDateSet, savedDob }) {
   const [dd, setDd] = useState("");
   const [mm, setMm] = useState("");
   const [yyyy, setYyyy] = useState("");
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked] = useState(!!savedDob);
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
@@ -21,18 +21,7 @@ export default function Zone01Identify({ onDateSet }) {
     }
     setError("");
     setLocked(true);
-    setTimeout(() => {
-      onDateSet(iso);
-      setTimeout(() => {
-        document
-          .querySelector("[data-scroll-container]")
-          ?.scrollBy({ top: window.innerHeight, behavior: "smooth" });
-      }, 600);
-    }, 1200);
-  };
-
-  const handleKey = (e) => {
-    if (e.key === "Enter") handleSubmit();
+    onDateSet(iso);
   };
 
   const inputStyle = {
@@ -68,18 +57,44 @@ export default function Zone01Identify({ onDateSet }) {
         overflow: "hidden",
       }}
     >
-      {/* subtle background texture */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(ellipse at 50% 40%, var(--bg3) 0%, var(--bg) 70%)",
+            "radial-gradient(ellipse at 30% 30%, var(--bg3) 0%, var(--bg) 60%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: "20%",
+          left: "10%",
+          width: "300px",
+          height: "300px",
+          borderRadius: "50%",
+          background: "var(--glow)",
+          filter: "blur(80px)",
+          opacity: 0.3,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "20%",
+          right: "10%",
+          width: "200px",
+          height: "200px",
+          borderRadius: "50%",
+          background: "var(--glow)",
+          filter: "blur(60px)",
+          opacity: 0.2,
           pointerEvents: "none",
         }}
       />
 
-      {/* top wordmark */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -96,7 +111,7 @@ export default function Zone01Identify({ onDateSet }) {
           textTransform: "uppercase",
         }}
       >
-        howOld · v3.0
+        howOld v3.0
       </motion.div>
 
       <div
@@ -108,11 +123,10 @@ export default function Zone01Identify({ onDateSet }) {
           textAlign: "center",
         }}
       >
-        {/* headline */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 1, delay: 0.3 }}
         >
           <div
             style={{
@@ -137,14 +151,13 @@ export default function Zone01Identify({ onDateSet }) {
               color: "var(--text2)",
               fontWeight: 300,
               letterSpacing: "0.5px",
-              marginBottom: "56px",
+              marginBottom: "48px",
             }}
           >
             Your birthdate, decoded.
           </div>
         </motion.div>
 
-        {/* date input */}
         <AnimatePresence mode="wait">
           {!locked ? (
             <motion.div
@@ -152,15 +165,24 @@ export default function Zone01Identify({ onDateSet }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              style={{
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                background: "var(--glass-bg)",
+                border: "1px solid var(--glass-border)",
+                borderRadius: "16px",
+                padding: "32px 28px",
+                boxShadow:
+                  "0 16px 48px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-shine)",
+              }}
             >
-              {/* date fields */}
               <div
                 style={{
                   display: "flex",
                   gap: "12px",
                   alignItems: "flex-end",
-                  marginBottom: "32px",
+                  marginBottom: "28px",
                 }}
               >
                 <div style={{ flex: 1 }}>
@@ -192,12 +214,11 @@ export default function Zone01Identify({ onDateSet }) {
                       const v = e.target.value.replace(/\D/g, "");
                       setDd(v);
                       if (v.length === 2)
-                        e.target.nextElementSibling?.focus?.();
+                        document.getElementById("mm-input")?.focus();
                     }}
-                    onKeyDown={handleKey}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   />
                 </div>
-
                 <div
                   style={{
                     color: "var(--text3)",
@@ -209,7 +230,6 @@ export default function Zone01Identify({ onDateSet }) {
                 >
                   /
                 </div>
-
                 <div style={{ flex: 1 }}>
                   <div
                     style={{
@@ -241,10 +261,9 @@ export default function Zone01Identify({ onDateSet }) {
                       if (v.length === 2)
                         document.getElementById("yyyy-input")?.focus();
                     }}
-                    onKeyDown={handleKey}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   />
                 </div>
-
                 <div
                   style={{
                     color: "var(--text3)",
@@ -256,7 +275,6 @@ export default function Zone01Identify({ onDateSet }) {
                 >
                   /
                 </div>
-
                 <div style={{ flex: 2 }}>
                   <div
                     style={{
@@ -283,12 +301,11 @@ export default function Zone01Identify({ onDateSet }) {
                       (e.target.style.borderColor = "var(--border)")
                     }
                     onChange={(e) => setYyyy(e.target.value.replace(/\D/g, ""))}
-                    onKeyDown={handleKey}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   />
                 </div>
               </div>
 
-              {/* error */}
               <AnimatePresence>
                 {error && (
                   <motion.div
@@ -308,7 +325,6 @@ export default function Zone01Identify({ onDateSet }) {
                 )}
               </AnimatePresence>
 
-              {/* submit */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -325,21 +341,20 @@ export default function Zone01Identify({ onDateSet }) {
                   letterSpacing: "3px",
                   fontWeight: 700,
                   boxShadow: "0 8px 32px var(--glow)",
-                  transition: "box-shadow 0.3s ease",
                 }}
               >
-                REVEAL MY TIMELINE →
+                REVEAL MY TIMELINE
               </motion.button>
 
               <div
                 style={{
-                  marginTop: "16px",
+                  marginTop: "14px",
                   fontFamily: "var(--font-body)",
                   fontSize: "12px",
                   color: "var(--text3)",
                 }}
               >
-                No account needed · Nothing is stored
+                No account needed · Nothing stored on our servers
               </div>
             </motion.div>
           ) : (
@@ -347,13 +362,13 @@ export default function Zone01Identify({ onDateSet }) {
               key="locked"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.5 }}
               style={{ textAlign: "center" }}
             >
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
                 style={{
                   width: "64px",
                   height: "64px",
@@ -365,9 +380,10 @@ export default function Zone01Identify({ onDateSet }) {
                   justifyContent: "center",
                   margin: "0 auto 20px",
                   fontSize: "24px",
+                  color: "var(--accent)",
                 }}
               >
-                ✦
+                +
               </motion.div>
               <div
                 style={{
@@ -375,16 +391,16 @@ export default function Zone01Identify({ onDateSet }) {
                   fontSize: "28px",
                   color: "var(--accent)",
                   fontStyle: "italic",
+                  marginBottom: "8px",
                 }}
               >
-                Decoding your timeline...
+                {savedDob ? "Welcome back." : "Decoding your timeline..."}
               </div>
               <div
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "13px",
                   color: "var(--text3)",
-                  marginTop: "8px",
                 }}
               >
                 scroll down
@@ -394,7 +410,6 @@ export default function Zone01Identify({ onDateSet }) {
         </AnimatePresence>
       </div>
 
-      {/* bottom hint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.4 }}
@@ -406,10 +421,9 @@ export default function Zone01Identify({ onDateSet }) {
           fontSize: "10px",
           color: "var(--text3)",
           letterSpacing: "3px",
-          animation: "fade-in 1s ease forwards",
         }}
       >
-        ↓ scroll to explore
+        scroll to explore
       </motion.div>
     </div>
   );
